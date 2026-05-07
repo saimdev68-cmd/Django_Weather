@@ -3,7 +3,6 @@ from django.views import View
 from django.conf import settings
 import requests
 from datetime import datetime
-from django.http import HttpResponse
 
 # Create your views here.
 
