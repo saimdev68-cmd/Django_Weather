@@ -50,7 +50,3 @@ class WeatherView(View):
             "weather": weather_data,
             "city": city
         })
-    
-class Home(View):
-    def get(self,request):
-        return HttpResponse ("Hello")
