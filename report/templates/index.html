@@ -1,0 +1,111 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkyCast 🌤️ | Modern Weather</title>
+    <link rel="stylesheet" href="{% static "style.css" %}">
+</head>
+<body id="body-bg">
+
+    <div class="container">
+        <h2>SkyCast 🌤️</h2>
+        
+        <form method="get">
+            <input type="text" name="city" placeholder="Search city..." value="{{ city }}" required>
+            <button type="submit">Go</button>
+        </form>
+
+        {% if weather %}
+            <div class="weather-card">
+                {% if weather.error %}
+                    <p class="error">⚠️ {{ weather.error }}</p>
+                {% else %}
+                    <div class="city-name">{{ weather.city }}</div>
+                    <div class="temp" id="main-temp">{{ weather.temperature }}°C</div>
+                    <div class="feels-like">Feels like {{ weather.feels_like }}°C</div>
+                    <div style="text-transform: capitalize; opacity: 0.8; margin-bottom: 0.5rem;">{{ weather.description }}</div>
+                    
+                    <div class="high-low">
+                        <span>↑ H: {{ weather.temp_max }}°</span>
+                        <span>↓ L: {{ weather.temp_min }}°</span>
+                    </div>
+
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <strong>Humidity</strong>
+                            {{ weather.humidity }}%
+                        </div>
+                        <div class="detail-item">
+                            <strong>Wind</strong>
+                            {{ weather.wind_speed }} km/h
+                        </div>
+                        <div class="detail-item">
+                            <strong>Visibility</strong>
+                            {{ weather.visibility }} Km
+                        </div>
+                        <div class="detail-item">
+                            <strong>Sunrise</strong>
+                            {{ weather.sunrise|time }}
+                        </div>
+                        <div class="detail-item">
+                            <strong>Sunset</strong>
+                            {{ weather.sunset|time }}
+                        </div>
+                        <div class="detail-item">
+                            <strong>Mode</strong>
+                            {% if weather.sunrise.timestamp > weather.current_time or weather.sunset.timestamp < weather.current_time %}
+                                🌙 Night Time
+                            {% else %}
+                                ☀️ Daylight
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        const body = document.getElementById('body-bg');
+        const temp = parseInt("{{ weather.temperature|default:20 }}");
+        const condition = "{{ weather.condition_main }}".toLowerCase();
+        
+        const now = new Date().getTime() / 1000;
+        const sunrise = parseInt("{{ weather.sunrise.timestamp }}");
+        const sunset = parseInt("{{ weather.sunset.timestamp }}");
+        const isNight = now < sunrise || now > sunset;
+
+        function updateBackground() {
+            if (condition.includes('rain') || condition.includes('drizzle') || condition.includes('thunderstorm')) {
+                body.style.background = "linear-gradient(135deg, #373b44 0%, #4286f4 100%)"; 
+                return;
+            }
+            
+            if (condition.includes('cloud')) {
+                body.style.background = "linear-gradient(135deg, #bdc3c7 0%, #2c3e50 100%)"; 
+                return;
+            }
+
+            
+            if (isNight) {
+                body.style.background = "linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)"; // Deep Night
+            } else {
+                
+                if (temp > 28) {
+                    body.style.background = "linear-gradient(135deg, #f83600 0%, #f9d423 100%)"; 
+                } else if (temp < 15) {
+                    body.style.background = "linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)"; 
+                } else {
+                    body.style.background = "linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)"; 
+                }
+            }
+        }
+
+        if ("{{ weather.city }}") {
+            updateBackground();
+        }
+    </script>
+</body>
+</html>
