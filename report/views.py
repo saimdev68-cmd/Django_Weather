@@ -3,8 +3,7 @@ from django.views import View
 from django.conf import settings
 import requests
 from datetime import datetime
-from django.http import JsonResponse
-from django.utils import timezone
+from django.http import HttpResponse
 
 # Create your views here.
 
@@ -51,3 +50,7 @@ class WeatherView(View):
             "weather": weather_data,
             "city": city
         })
+    
+class Home(View):
+    def get(self,request):
+        return HttpResponse ("Hello")
