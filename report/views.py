@@ -36,7 +36,7 @@ class WeatherView(View):
                         "temp_max": data["main"]["temp_max"],
                         "visibility": round(visibility, 2),
                         "condition_main": data["weather"][0]["main"],
-                        "current_time": datetime.now(),  # FIXED
+                        "current_time": datetime.now(),
                     }
 
                 else:
